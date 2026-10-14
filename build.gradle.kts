@@ -29,17 +29,19 @@ subprojects {
     plugins.withId(rootProject.libs.plugins.mavenPublish.get().pluginId) {
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
             publishToMavenCentral()
-            signAllPublications()
+            if (providers.gradleProperty("releaseSigningEnabled").orElse("true").get().toBoolean()) {
+                signAllPublications()
+            }
             coordinates(
-                groupId = "io.github.anilbeesetti",
+                groupId = "io.github.178meorg",
                 artifactId = property("POM_ARTIFACT_ID") as String,
-                version = "${libs.versions.androidxMedia3.get()}-0.16.0"
+                version = providers.gradleProperty("VERSION_NAME").get()
             )
 
             pom {
                 name = property("POM_NAME") as String
                 description = property("POM_DESCRIPTION") as String
-                url = "https://github.com/anilbeesetti/nextlib"
+                url = "https://github.com/178meorg/nextlib"
 
                 licenses {
                     license {
@@ -55,7 +57,7 @@ subprojects {
                     }
                 }
                 scm {
-                    url = "https://github.com/anilbeesetti/nextlib"
+                    url = "https://github.com/178meorg/nextlib"
                 }
             }
         }

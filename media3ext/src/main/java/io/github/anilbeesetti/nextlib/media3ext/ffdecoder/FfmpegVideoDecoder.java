@@ -76,7 +76,11 @@ final class FfmpegVideoDecoder extends
      * not required.
      */
     @Nullable
-    private static byte[] getExtraData(String mimeType, List<byte[]> initializationData) {
+    static byte[] getExtraData(String mimeType, List<byte[]> initializationData)
+            throws FfmpegDecoderException {
+        if (MimeTypes.VIDEO_VC1.equals(mimeType)) {
+            return Vc1InitializationData.build(initializationData);
+        }
         if (initializationData.isEmpty()) return null;
         switch (mimeType) {
             case MimeTypes.VIDEO_H264 -> {

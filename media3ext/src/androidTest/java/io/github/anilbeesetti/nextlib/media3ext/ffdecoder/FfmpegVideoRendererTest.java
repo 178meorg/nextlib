@@ -34,6 +34,19 @@ public class FfmpegVideoRendererTest {
     }
 
     @Test
+    public void vc1RequiresHeadersAndBundledDecoder() {
+        assertTrue(FfmpegLibrary.supportsFormat(MimeTypes.VIDEO_VC1));
+        Format missingHeaders = new Format.Builder().setSampleMimeType(MimeTypes.VIDEO_VC1).build();
+        assertSupport(renderer(), missingHeaders, C.FORMAT_UNSUPPORTED_SUBTYPE);
+        // Structurally complete headers: actual bitstream validity is checked by avcodec_open2.
+        byte[] headers = {0, 0, 1, 0x0f, (byte) 0xc2, 0, 0, 3, 1, 0x20,
+                0, 0, 1, 0x0e, 0, 0x40, 0x10};
+        assertSupport(renderer(), missingHeaders.buildUpon()
+                .setInitializationData(java.util.Collections.singletonList(headers)).build(),
+                C.FORMAT_HANDLED);
+    }
+
+    @Test
     public void capabilitiesRejectMissingUnsupportedAndEncryptedFormats() {
         assertTrue("Tests require the bundled native decoder", FfmpegLibrary.isAvailable());
         FfmpegVideoRenderer renderer = renderer();

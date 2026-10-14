@@ -1,20 +1,24 @@
 # NextLib
 
-[![Build nextlib](https://github.com/anilbeesetti/nextlib/actions/workflows/build.yaml/badge.svg)](https://github.com/anilbeesetti/nextlib/actions/workflows/build.yaml) [![Maven Central](https://img.shields.io/maven-central/v/io.github.anilbeesetti/nextlib-media3ext.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.anilbeesetti/nextlib-media3ext)
+[![Build nextlib](https://github.com/178meorg/nextlib/actions/workflows/build.yaml/badge.svg)](https://github.com/178meorg/nextlib/actions/workflows/build.yaml)
 
 NextLib is a library for adding ffmpeg codecs to [Media3](https://github.com/androidx/media).
 
 ## Currently supported decoders
 - **Audio**: Vorbis, Opus, Flac, Alac, pcm_mulaw, pcm_alaw, MP3, Amrnb, Amrwb, AAC, AC3, EAC3, dca, mlp, truehd
-- **Video**: H.264, HEVC, VP8 and VP9 (FFmpeg built-in decoders), AV1 (dav1d)
+- **Video**: H.264, HEVC, VP8 and VP9 (FFmpeg built-in decoders), AV1 (dav1d), VC-1 (requires sequence and entry-point initialization headers; playback verification pending)
+
+This fork targets Media3 **1.8.0**. Its Maven coordinates use `io.github.178meorg`
+and version `1.8.0-0.16.0-vc1.1`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
+for initialization requirements and outstanding device tests.
 
 ## Setup
 Kotlin DSL:
 
 ```kotlin
 dependencies {
-    implementation("io.github.anilbeesetti:nextlib-media3ext:INSERT_VERSION_HERE") // To add media3 software decoders and extensions
-    implementation("io.github.anilbeesetti:nextlib-mediainfo:INSERT_VERSION_HERE") // To get media info through ffmpeg
+    implementation("io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.1") // To add media3 software decoders and extensions
+    implementation("io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.1") // To get media info through ffmpeg
 }
 ```
 
@@ -22,8 +26,8 @@ Groovy DSL:
 
 ```gradle
 dependencies {
-    implementation "io.github.anilbeesetti:nextlib-media3ext:INSERT_VERSION_HERE" // To add media3 software decoders and extensions
-    implementation "io.github.anilbeesetti:nextlib-mediainfo:INSERT_VERSION_HERE" // To get media info through ffmpeg
+    implementation "io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.1" // To add media3 software decoders and extensions
+    implementation "io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.1" // To get media info through ffmpeg
 }
 ```
 
@@ -133,3 +137,29 @@ checks and tested device coverage.
 
 See [FFmpeg and mbedTLS upgrade verification](ffmpeg/UPGRADE_VERIFICATION.md) for
 the current dependency build, TLS, rotation metadata, and playback checks.
+
+## GitHub Actions and Maven Central
+
+The build workflow runs on pushes to `main`, pull requests, and manual dispatch.
+It uses JDK 25, installs the pinned Android tools, builds all four native ABIs,
+runs the JVM tests, and uploads both release AARs.
+
+The publish workflow runs on `v*` tags, `release/**` branches, or manual dispatch.
+`VERSION_NAME` in `gradle.properties` is the publication version; tag and release
+branch names must match it (for example `v1.8.0-0.16.0-vc1.1` or
+`release/1.8.0-0.16.0-vc1.1`). It builds and tests, uploads AARs, signs the Maven
+publications, requests automatic publication to Maven Central, and creates a
+GitHub release containing the AARs after publication succeeds.
+
+Use the same secret names as `178meorg/libvlcjni`:
+
+- `CENTRAL_USERNAME`: Central Portal user-token username.
+- `CENTRAL_PASSWORD`: Central Portal user-token password.
+- `SIGNING_KEY`: complete ASCII-armored GPG private signing key.
+- `SIGNING_PASSWORD`: signing key passphrase (empty for an unencrypted key).
+
+The Secrets must be available to `178meorg/nextlib`; repository Secrets from
+`libvlcjni` are not automatically shared. Organization Secrets can be configured
+to allow both repositories. The publishing account must have access to the
+`io.github.178meorg` namespace, and the signing public key must be distributed.
+Missing required Secrets cause an explicit failure before the native build.

@@ -114,6 +114,13 @@ public final class FfmpegVideoRenderer extends DecoderVideoRenderer {
         } else if (format.cryptoType != C.CRYPTO_TYPE_NONE) {
             return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_DRM);
         } else {
+            if (MimeTypes.VIDEO_VC1.equals(mimeType)) {
+                try {
+                    Vc1InitializationData.build(format.initializationData);
+                } catch (FfmpegDecoderException e) {
+                    return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_SUBTYPE);
+                }
+            }
             return RendererCapabilities.create(
                     C.FORMAT_HANDLED,
                     ADAPTIVE_NOT_SEAMLESS,
