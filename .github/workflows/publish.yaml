@@ -54,11 +54,20 @@ jobs:
 
       - name: Install pinned Android SDK tools
         run: |
+          sdk_root="$RUNNER_TEMP/nextlib-android-sdk"
+          cli_stage="$RUNNER_TEMP/nextlib-android-cli"
+          mkdir -p "$sdk_root/cmdline-tools" "$cli_stage"
+          curl -fL --retry 3 https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip -o "$cli_stage/tools.zip"
+          unzip -q "$cli_stage/tools.zip" -d "$cli_stage"
+          mv "$cli_stage/cmdline-tools" "$sdk_root/cmdline-tools/latest"
+          echo "ANDROID_HOME=$sdk_root" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$sdk_root" >> "$GITHUB_ENV"
+          sdkmanager="$sdk_root/cmdline-tools/latest/bin/sdkmanager"
           ndk_version=$(sed -n 's/^ndk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
           cmake_version=$(sed -n 's/^cmake = "\(.*\)"/\1/p' gradle/libs.versions.toml)
           compile_sdk=$(sed -n 's/^androidCompileSdk = "\(.*\)"/\1/p' gradle/libs.versions.toml)
-          sdkmanager --licenses < <(yes) >/dev/null
-          sdkmanager "platforms;android-$compile_sdk" "build-tools;36.0.0" \
+          "$sdkmanager" --licenses < <(yes) >/dev/null
+          "$sdkmanager" "platforms;android-$compile_sdk" "build-tools;36.0.0" \
             "ndk;$ndk_version" "cmake;$cmake_version"
 
       - name: Setup Gradle
