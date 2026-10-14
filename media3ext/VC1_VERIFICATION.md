@@ -1,5 +1,11 @@
 # VC-1 integration and verification
 
+Version `1.8.0-0.16.0-vc1.4` cleans up the SimpleDecoder worker and any created
+native context when video decoder construction fails. The regression reproduced
+the leak before the fix and passed afterward on Android 15 x86_64. All nine
+video instrumentation tests, 17 JVM tests, and release lint passed. Release
+packaging remains ARM-only with minSdk 21.
+
 Version `1.8.0-0.16.0-vc1.3` temporarily packages only `armeabi-v7a` and
 `arm64-v8a` in both Release AARs. Release builds and archive inspection passed;
 Debug retains all four ABIs. Android API 21 and Media3 1.8.0 are unchanged.
