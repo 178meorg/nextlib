@@ -79,3 +79,10 @@ for remote release publication. The consuming App
 must add `mavenLocal()` and keep all Media3 modules on 1.8.0.
 Remote Maven Central publication requires credentials, a signing key, and access
 to the `io.github.178meorg` namespace; none were configured in this environment.
+
+The GitHub publishing workflow now targets Cloudsmith `178meorg/nextlib` using
+`CLOUDSMITH_USERNAME` and `CLOUDSMITH_API_KEY` repository Secrets. GPG signing is
+disabled for this target. The public download endpoint is
+`https://dl.cloudsmith.io/public/178meorg/nextlib/maven/`; anonymous downloads depend
+on the repository being public. Configuring the target does not establish that
+the remote publication has completed.

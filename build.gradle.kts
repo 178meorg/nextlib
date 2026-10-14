@@ -61,5 +61,14 @@ subprojects {
                 }
             }
         }
+        configure<PublishingExtension> {
+            repositories {
+                maven {
+                    name = "Cloudsmith"
+                    url = uri("https://maven.cloudsmith.io/178meorg/nextlib/")
+                    credentials(PasswordCredentials::class)
+                }
+            }
+        }
     }
 }

@@ -138,7 +138,7 @@ checks and tested device coverage.
 See [FFmpeg and mbedTLS upgrade verification](ffmpeg/UPGRADE_VERIFICATION.md) for
 the current dependency build, TLS, rotation metadata, and playback checks.
 
-## GitHub Actions and Maven Central
+## GitHub Actions and Cloudsmith
 
 The build workflow runs on pushes to `main`, pull requests, and manual dispatch.
 It uses JDK 25, installs the pinned Android tools, builds all four native ABIs,
@@ -147,19 +147,38 @@ runs the JVM tests, and uploads both release AARs.
 The publish workflow runs on `v*` tags, `release/**` branches, or manual dispatch.
 `VERSION_NAME` in `gradle.properties` is the publication version; tag and release
 branch names must match it (for example `v1.8.0-0.16.0-vc1.1` or
-`release/1.8.0-0.16.0-vc1.1`). It builds and tests, uploads AARs, signs the Maven
-publications, requests automatic publication to Maven Central, and creates a
+`release/1.8.0-0.16.0-vc1.1`). It builds and tests, uploads AARs, publishes the Maven
+publications to Cloudsmith without requiring a GPG key, and creates a
 GitHub release containing the AARs after publication succeeds.
 
-Use the same secret names as `178meorg/libvlcjni`:
+Configure these repository Secrets in `178meorg/nextlib`:
 
-- `CENTRAL_USERNAME`: Central Portal user-token username.
-- `CENTRAL_PASSWORD`: Central Portal user-token password.
-- `SIGNING_KEY`: complete ASCII-armored GPG private signing key.
-- `SIGNING_PASSWORD`: signing key passphrase (empty for an unencrypted key).
+- `CLOUDSMITH_USERNAME`: your Cloudsmith username.
+- `CLOUDSMITH_API_KEY`: API key with upload access to `178meorg/nextlib`.
 
-The Secrets must be available to `178meorg/nextlib`; repository Secrets from
-`libvlcjni` are not automatically shared. Organization Secrets can be configured
-to allow both repositories. The publishing account must have access to the
-`io.github.178meorg` namespace, and the signing public key must be distributed.
-Missing required Secrets cause an explicit failure before the native build.
+The publishing endpoint is `https://maven.cloudsmith.io/178meorg/nextlib/`.
+To publish locally with credentials supplied through Gradle properties or
+`ORG_GRADLE_PROJECT_CloudsmithUsername` / `ORG_GRADLE_PROJECT_CloudsmithPassword`:
+
+```sh
+./gradlew publishAllPublicationsToCloudsmithRepository -PreleaseSigningEnabled=false
+```
+
+After publication, consumers can use this public Maven repository without credentials.
+Confirm the Cloudsmith repository is public before distributing the dependency:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://dl.cloudsmith.io/public/178meorg/nextlib/maven/")
+            content { includeGroup("io.github.178meorg") }
+        }
+    }
+}
+```
+
+Maven Central remains an optional publishing target. It requires Central credentials
+and GPG signing, and is not invoked by the Cloudsmith publishing workflow.
