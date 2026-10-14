@@ -49,6 +49,10 @@ androidComponents {
     onVariants { variant ->
         variant.androidTest?.sources?.assets?.addStaticSourceDirectory("src/test/cpp/fixtures")
     }
+    onVariants(selector().withBuildType("release")) { variant ->
+        // Temporarily omit Intel ABIs from release artifacts.
+        variant.packaging.jniLibs.excludes.addAll(listOf("lib/x86/**", "lib/x86_64/**"))
+    }
 }
 
 tasks.configureEach {

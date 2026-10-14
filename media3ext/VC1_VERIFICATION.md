@@ -1,5 +1,9 @@
 # VC-1 integration and verification
 
+Version `1.8.0-0.16.0-vc1.3` temporarily packages only `armeabi-v7a` and
+`arm64-v8a` in both Release AARs. Release builds and archive inspection passed;
+Debug retains all four ABIs. Android API 21 and Media3 1.8.0 are unchanged.
+
 Version `1.8.0-0.16.0-vc1.2` lowers both modules to Android API 21 (Android 5.0).
 Release builds for all four ABIs, release lint, and all 17 JVM tests passed.
 Both release AAR manifests declare `minSdkVersion=21`; the Media3 1.8.0
