@@ -1,8 +1,10 @@
 package io.github.anilbeesetti.nextlib.media3ext.ffdecoder;
 
+import androidx.media3.common.util.UnstableApi;
 import java.util.List;
 
 /** Converts Media3 VC-1 start-code data to FFmpeg extradata without dropping header bytes. */
+@UnstableApi
 final class Vc1InitializationData {
     private Vc1InitializationData() {}
 

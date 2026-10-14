@@ -1,5 +1,12 @@
 # VC-1 integration and verification
 
+Version `1.8.0-0.16.0-vc1.2` lowers both modules to Android API 21 (Android 5.0).
+Release builds for all four ABIs, release lint, and all 17 JVM tests passed.
+Both release AAR manifests declare `minSdkVersion=21`; the Media3 1.8.0
+dependencies also declare API 21. FFmpeg is already built for Android API 21.
+Android 5.0 device playback has not been tested. The publication record below
+describes the earlier `vc1.1` release.
+
 This fork targets Media3 1.8.0. The publication coordinates are
 `io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.1` (and
 `nextlib-mediainfo` for the media-info module). The release AARs are built locally;

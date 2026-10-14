@@ -8,8 +8,8 @@ NextLib is a library for adding ffmpeg codecs to [Media3](https://github.com/and
 - **Audio**: Vorbis, Opus, Flac, Alac, pcm_mulaw, pcm_alaw, MP3, Amrnb, Amrwb, AAC, AC3, EAC3, dca, mlp, truehd
 - **Video**: H.264, HEVC, VP8 and VP9 (FFmpeg built-in decoders), AV1 (dav1d), VC-1 (requires sequence and entry-point initialization headers; playback verification pending)
 
-This fork targets Media3 **1.8.0**. Its Maven coordinates use `io.github.178meorg`
-and version `1.8.0-0.16.0-vc1.1`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
+This fork targets Media3 **1.8.0** and Android **5.0+ (API 21)**. Its Maven coordinates use `io.github.178meorg`
+and version `1.8.0-0.16.0-vc1.2`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
 for initialization requirements and outstanding device tests.
 
 ## Setup
@@ -17,8 +17,8 @@ Kotlin DSL:
 
 ```kotlin
 dependencies {
-    implementation("io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.1") // To add media3 software decoders and extensions
-    implementation("io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.1") // To get media info through ffmpeg
+    implementation("io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.2") // To add media3 software decoders and extensions
+    implementation("io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.2") // To get media info through ffmpeg
 }
 ```
 
@@ -26,8 +26,8 @@ Groovy DSL:
 
 ```gradle
 dependencies {
-    implementation "io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.1" // To add media3 software decoders and extensions
-    implementation "io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.1" // To get media info through ffmpeg
+    implementation "io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.2" // To add media3 software decoders and extensions
+    implementation "io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.2" // To get media info through ffmpeg
 }
 ```
 
@@ -146,8 +146,8 @@ runs the JVM tests, and uploads both release AARs.
 
 The publish workflow runs on `v*` tags, `release/**` branches, or manual dispatch.
 `VERSION_NAME` in `gradle.properties` is the publication version; tag and release
-branch names must match it (for example `v1.8.0-0.16.0-vc1.1` or
-`release/1.8.0-0.16.0-vc1.1`). It builds and tests, uploads AARs, publishes the Maven
+branch names must match it (for example `v1.8.0-0.16.0-vc1.2` or
+`release/1.8.0-0.16.0-vc1.2`). It builds and tests, uploads AARs, publishes the Maven
 publications to Cloudsmith without requiring a GPG key, and creates a
 GitHub release containing the AARs after publication succeeds.
 
