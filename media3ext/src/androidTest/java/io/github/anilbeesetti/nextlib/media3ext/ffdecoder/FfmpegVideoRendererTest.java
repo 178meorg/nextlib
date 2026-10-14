@@ -34,6 +34,45 @@ public class FfmpegVideoRendererTest {
     }
 
     @Test
+    public void constructorFailuresStopDecodeThreads() {
+        assertTrue("Tests require the bundled native decoder", FfmpegLibrary.isAvailable());
+        Format noHeaders = VP9.buildUpon().setSampleMimeType(MimeTypes.VIDEO_VC1).build();
+        // The legacy interlaced flag is explicitly rejected by FFmpeg's header parser.
+        byte[] invalidHeaders = {0, 0, 1, 0x0f, 0x20, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 1, 0x0e, 0};
+        Format invalidNativeHeaders = noHeaders.buildUpon()
+                .setInitializationData(java.util.Collections.singletonList(invalidHeaders)).build();
+        java.util.Set<Thread> before = Thread.getAllStackTraces().keySet();
+        for (int i = 0; i < 10; i++) {
+            FfmpegDecoderException missing = assertThrows(FfmpegDecoderException.class,
+                    () -> new FfmpegVideoDecoder(1, 1, 1024, 1, noHeaders));
+            assertTrue(missing.getMessage().contains("initialization data"));
+            FfmpegDecoderException nativeFailure = assertThrows(FfmpegDecoderException.class,
+                    () -> new FfmpegVideoDecoder(1, 1, 1024, 1, invalidNativeHeaders));
+            assertEquals("Failed to initialize decoder.", nativeFailure.getMessage());
+            // Fail buffer allocation after a native context has already been created.
+            RuntimeException allocationFailure = assertThrows(RuntimeException.class,
+                    () -> new FfmpegVideoDecoder(1, 1, -1024, 1, VP9));
+            assertTrue(allocationFailure instanceof IllegalArgumentException
+                    || allocationFailure instanceof NegativeArraySizeException);
+            for (Thread thread : Thread.getAllStackTraces().keySet()) {
+                assertFalse("Constructor leaked decoder thread: " + thread,
+                        !before.contains(thread) && thread.isAlive()
+                                && thread.getName().equals("ExoPlayer:SimpleDecoder"));
+            }
+        }
+        // Failure cleanup must not prevent a subsequent successful initialization.
+        FfmpegVideoDecoder decoder = null;
+        try {
+            decoder = new FfmpegVideoDecoder(1, 1, 1024, 1, VP9);
+        } catch (FfmpegDecoderException e) {
+            throw new AssertionError(e);
+        } finally {
+            if (decoder != null) decoder.release();
+        }
+    }
+
+    @Test
     public void vc1RequiresHeadersAndBundledDecoder() {
         assertTrue(FfmpegLibrary.supportsFormat(MimeTypes.VIDEO_VC1));
         Format missingHeaders = new Format.Builder().setSampleMimeType(MimeTypes.VIDEO_VC1).build();

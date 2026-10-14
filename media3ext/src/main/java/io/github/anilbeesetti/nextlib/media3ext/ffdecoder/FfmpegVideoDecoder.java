@@ -55,20 +55,38 @@ final class FfmpegVideoDecoder extends
     public FfmpegVideoDecoder(int numInputBuffers, int numOutputBuffers, int initialInputBufferSize, int threads, Format format) throws FfmpegDecoderException {
         super(new DecoderInputBuffer[numInputBuffers], new VideoDecoderOutputBuffer[numOutputBuffers]);
 
-        if (!FfmpegLibrary.isAvailable()) {
-            throw new FfmpegDecoderException("Failed to load decoder native library.");
+        try {
+            if (!FfmpegLibrary.isAvailable()) {
+                throw new FfmpegDecoderException("Failed to load decoder native library.");
+            }
+            assert format.sampleMimeType != null;
+            codecName = Assertions.checkNotNull(FfmpegLibrary.getCodecName(format.sampleMimeType));
+            extraData = getExtraData(format.sampleMimeType, format.initializationData);
+            // Format uses clockwise degrees. Ignore unsupported non-right-angle rotations.
+            int rotation = format.rotationDegrees % 360;
+            rotationDegrees = rotation % 90 == 0 ? (rotation + 360) % 360 : 0;
+            nativeContext = ffmpegInitialize(codecName, extraData, threads);
+            if (nativeContext == 0) {
+                throw new FfmpegDecoderException("Failed to initialize decoder.");
+            }
+            setInitialInputBufferSize(initialInputBufferSize);
+        } catch (FfmpegDecoderException | RuntimeException | Error failure) {
+            // SimpleDecoder starts its worker in super(). A failed constructor leaves no
+            // instance for the renderer to release, so stop the worker before rethrowing.
+            try {
+                try {
+                    super.release();
+                } finally {
+                    if (nativeContext != 0) {
+                        ffmpegRelease(nativeContext);
+                        nativeContext = 0;
+                    }
+                }
+            } catch (RuntimeException | Error cleanupFailure) {
+                failure.addSuppressed(cleanupFailure);
+            }
+            throw failure;
         }
-        assert format.sampleMimeType != null;
-        codecName = Assertions.checkNotNull(FfmpegLibrary.getCodecName(format.sampleMimeType));
-        extraData = getExtraData(format.sampleMimeType, format.initializationData);
-        // Format uses clockwise degrees. Ignore unsupported non-right-angle rotations.
-        int rotation = format.rotationDegrees % 360;
-        rotationDegrees = rotation % 90 == 0 ? (rotation + 360) % 360 : 0;
-        nativeContext = ffmpegInitialize(codecName, extraData, threads);
-        if (nativeContext == 0) {
-            throw new FfmpegDecoderException("Failed to initialize decoder.");
-        }
-        setInitialInputBufferSize(initialInputBufferSize);
     }
 
     /**
