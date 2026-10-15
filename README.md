@@ -9,20 +9,20 @@ NextLib is a library for adding ffmpeg codecs to [Media3](https://github.com/and
 - **Video**: H.264, HEVC, VP8 and VP9 (FFmpeg built-in decoders), AV1 (dav1d), VC-1 (requires sequence and entry-point initialization headers; playback verification pending)
 
 This fork targets Media3 **1.8.0** and Android **5.0+ (API 21)**. Its Maven coordinates use `io.github.178meorg`
-and version `1.8.0-0.16.0-vc1.4`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
+and version `1.8.0-0.16.0-vc1.5`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
 for initialization requirements and outstanding device tests.
 
-Release AARs temporarily omit `x86` and `x86_64` libraries and package only
-`armeabi-v7a` and `arm64-v8a`. Debug builds retain all four ABIs. Previously published
-versions keep their original ABI contents.
+Release and Debug AARs include all four ABIs: `x86`, `x86_64`, `armeabi-v7a`, and
+`arm64-v8a`. Release support for Intel ABIs is restored in `1.8.0-0.16.0-vc1.5`;
+previously published versions keep their original ABI contents.
 
 ## Setup
 Kotlin DSL:
 
 ```kotlin
 dependencies {
-    implementation("io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.4") // To add media3 software decoders and extensions
-    implementation("io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.4") // To get media info through ffmpeg
+    implementation("io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.5") // To add media3 software decoders and extensions
+    implementation("io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.5") // To get media info through ffmpeg
 }
 ```
 
@@ -30,8 +30,8 @@ Groovy DSL:
 
 ```gradle
 dependencies {
-    implementation "io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.4" // To add media3 software decoders and extensions
-    implementation "io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.4" // To get media info through ffmpeg
+    implementation "io.github.178meorg:nextlib-media3ext:1.8.0-0.16.0-vc1.5" // To add media3 software decoders and extensions
+    implementation "io.github.178meorg:nextlib-mediainfo:1.8.0-0.16.0-vc1.5" // To get media info through ffmpeg
 }
 ```
 
@@ -150,8 +150,8 @@ runs the JVM tests, and uploads both release AARs.
 
 The publish workflow runs on `v*` tags, `release/**` branches, or manual dispatch.
 `VERSION_NAME` in `gradle.properties` is the publication version; tag and release
-branch names must match it (for example `v1.8.0-0.16.0-vc1.4` or
-`release/1.8.0-0.16.0-vc1.4`). It builds and tests, uploads AARs, publishes the Maven
+branch names must match it (for example `v1.8.0-0.16.0-vc1.5` or
+`release/1.8.0-0.16.0-vc1.5`). It builds and tests, uploads AARs, publishes the Maven
 publications to Cloudsmith without requiring a GPG key, and creates a
 GitHub release containing the AARs after publication succeeds.
 

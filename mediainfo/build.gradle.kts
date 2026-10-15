@@ -44,13 +44,6 @@ android {
     }
 }
 
-androidComponents {
-    onVariants(selector().withBuildType("release")) { variant ->
-        // Temporarily omit Intel ABIs from release artifacts.
-        variant.packaging.jniLibs.excludes.addAll(listOf("lib/x86/**", "lib/x86_64/**"))
-    }
-}
-
 tasks.configureEach {
     if (name == "preBuild" || name.startsWith("configureCMake") || name.startsWith("buildCMake")) {
         dependsOn(":ffmpegSetup")

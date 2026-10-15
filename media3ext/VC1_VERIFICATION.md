@@ -1,5 +1,11 @@
 # VC-1 integration and verification
 
+Version `1.8.0-0.16.0-vc1.5` restores `x86` and `x86_64` libraries in both
+Release AARs, alongside `armeabi-v7a` and `arm64-v8a`. Release builds, 17 JVM
+tests, release lint, and FFmpeg setup checks passed. Archive inspection confirmed
+each module's JNI and required FFmpeg libraries for all four ABIs, including their
+ELF architectures; both manifests retain minSdk 21.
+
 Version `1.8.0-0.16.0-vc1.4` cleans up the SimpleDecoder worker and any created
 native context when video decoder construction fails. The regression reproduced
 the leak before the fix and passed afterward on Android 15 x86_64. All nine
