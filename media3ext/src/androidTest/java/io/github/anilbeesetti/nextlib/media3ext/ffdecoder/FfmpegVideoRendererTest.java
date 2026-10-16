@@ -345,8 +345,14 @@ public class FfmpegVideoRendererTest {
             packet = new byte[size];
             asset.readFully(packet);
         }
-        DecoderInputBuffer input = decoder.dequeueInputBuffer();
-        assertNotNull(input);
+        long inputDeadline = SystemClock.elapsedRealtime() + 5000;
+        DecoderInputBuffer input;
+        // A packet can still be draining after its first output was returned. The Decoder
+        // contract permits a temporarily empty input pool while that packet finishes.
+        while ((input = decoder.dequeueInputBuffer()) == null && SystemClock.elapsedRealtime() < inputDeadline) {
+            SystemClock.sleep(5);
+        }
+        assertNotNull("Input pool did not recover after releasing the previous output", input);
         input.ensureSpaceForWrite(packet.length);
         input.data.put(packet);
         input.timeUs = timeUs;

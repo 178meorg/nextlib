@@ -17,6 +17,7 @@ import androidx.media3.decoder.SimpleDecoderOutputBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaCodecConfig;
 
 /** FFmpeg audio decoder. */
 /* package */
@@ -49,6 +50,7 @@ final class FfmpegAudioDecoder
       boolean outputFloat)
       throws FfmpegDecoderException {
     super(new DecoderInputBuffer[numInputBuffers], new SimpleDecoderOutputBuffer[numOutputBuffers]);
+    try {
     if (!FfmpegLibrary.isAvailable()) {
       throw new FfmpegDecoderException("Failed to load decoder native libraries.");
     }
@@ -58,11 +60,17 @@ final class FfmpegAudioDecoder
     encoding = outputFloat ? C.ENCODING_PCM_FLOAT : C.ENCODING_PCM_16BIT;
     outputBufferSize = outputFloat ? INITIAL_OUTPUT_BUFFER_SIZE_32BIT : INITIAL_OUTPUT_BUFFER_SIZE_16BIT;
     nativeContext =
-        ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount);
+        ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount,
+                RealMediaCodecConfig.cookBlockAlign(format));
     if (nativeContext == 0) {
       throw new FfmpegDecoderException("Initialization failed.");
     }
     setInitialInputBufferSize(initialInputBufferSize);
+    } catch (FfmpegDecoderException | RuntimeException | Error failure) {
+      super.release();
+      if (nativeContext != 0) { ffmpegRelease(nativeContext); nativeContext = 0; }
+      throw failure;
+    }
   }
 
   @Override
@@ -174,7 +182,7 @@ final class FfmpegAudioDecoder
   private static byte[] getExtraData(String mimeType, List<byte[]> initializationData) {
     if (initializationData.isEmpty()) return null;
     return switch (mimeType) {
-      case MimeTypes.AUDIO_AAC, MimeTypes.AUDIO_OPUS -> initializationData.get(0);
+      case MimeTypes.AUDIO_AAC, MimeTypes.AUDIO_OPUS, RealMediaCodecConfig.AUDIO_COOK -> initializationData.get(0);
       case MimeTypes.AUDIO_ALAC -> getAlacExtraData(initializationData);
       case MimeTypes.AUDIO_VORBIS -> getVorbisExtraData(initializationData);
       // Other codecs do not require extra data.
@@ -218,7 +226,8 @@ final class FfmpegAudioDecoder
       @Nullable byte[] extraData,
       boolean outputFloat,
       int rawSampleRate,
-      int rawChannelCount);
+      int rawChannelCount,
+      int blockAlign);
 
   private native int ffmpegDecode(
       long context, ByteBuffer inputData, int inputSize, SimpleDecoderOutputBuffer decoderOutputBuffer, ByteBuffer outputData, int outputSize);

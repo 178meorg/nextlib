@@ -1,0 +1,4 @@
+{
+  global: Java_io_github_anilbeesetti_nextlib_media3ext_realmedia_RealMediaProbe_*;
+  local: *;
+};

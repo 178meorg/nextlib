@@ -1,0 +1,81 @@
+{
+  "ffmpeg": {
+    "version": "9.0.1",
+    "url": "https://ffmpeg.org/releases/ffmpeg-9.0.1.tar.gz",
+    "sha256": "657dbf258cce6c0681714b6e40b8ca69e988c67ecfc2f7aab47574e6ebaceb38"
+  },
+  "regressions": [
+    {
+      "name": "regression.mp4",
+      "url": "https://raw.githubusercontent.com/androidx/media/1.8.0/libraries/test_data/src/test/assets/media/mp4/sample.mp4",
+      "sha256": "6aecd03e411743feec6e9d2bb0209ada82f176ad45a4a44cbd2df0ee8290c8f6"
+    },
+    {
+      "name": "regression.mkv",
+      "url": "https://raw.githubusercontent.com/androidx/media/1.8.0/libraries/test_data/src/test/assets/media/mkv/sample.mkv",
+      "sha256": "b66fcc66e85438dad7293a2e84175d24243f598d144d0c79dcb0eb64d419f5d6"
+    }
+  ],
+  "samples": [
+    {
+      "name": "rv30-hi1.rm",
+      "url": "https://samples.ffmpeg.org/real/VC-RV30/hi1.rm",
+      "sha256": "89be4723c0d5b7f525e015dbd7782955d07e1703197fb50f061a94db87012ce3",
+      "role": "reference",
+      "codecs": ["cook", "rv30"],
+      "notes": "Full sequential demux/decode reaches EOS; FFmpeg logs Size mismatch. Keep this diagnostic in results."
+    },
+    {
+      "name": "rv40-blade.rm",
+      "url": "https://samples.ffmpeg.org/real/VC-RV40/Blade2_640_1Mbps.rm",
+      "sha256": "00da9dfaa767dbb83b57e40547727ae5d11ad247642e6230c1971d2a127aab32",
+      "role": "reference",
+      "codecs": ["cook", "rv40"],
+      "notes": "Full sequential demux/decode reaches EOS; FFmpeg logs an invalid trailing index stream ID."
+    },
+    {
+      "name": "cook.rm",
+      "url": "https://samples.ffmpeg.org/real/AC-cook/FUN_RM_64.rm",
+      "sha256": "e53ea69cd0efde373f4e7d0a8381e08e31b41378d57a27684adca0b38c0f0f1c",
+      "role": "reference",
+      "codecs": ["cook"],
+      "notes": "Stereo Cook; full decode reaches EOS; invalid trailing index stream ID diagnostic."
+    },
+    {
+      "name": "cook-51.rma",
+      "url": "https://samples.ffmpeg.org/real/AC-cook/cook_5.1/Surround_6ch.rma",
+      "sha256": "be136fc7a5f8ca1f260833303a6b7c5a6fbe8d2a2cded175ecc12fe07f0a5141",
+      "role": "reference",
+      "codecs": ["cook"],
+      "notes": "Six-channel Cook; layout is carried by codec extradata. Trailing invalid index stream ID diagnostic."
+    },
+    {
+      "name": "rv30-atrac3.rmvb",
+      "url": "https://samples.ffmpeg.org/real/VC-RV30/rv30_cmsg24_test.rmvb",
+      "sha256": "bc14b7eb2ce9f53cee7f7f2107d1c0e86d3c2dbe1d5e7ce92538b9e6955a9d2a",
+      "role": "unsupported_audio",
+      "notes": "ATRAC3 is outside the first-release Cook scope. Not an RV30+Cook acceptance fixture."
+    },
+    {
+      "name": "rv30-truncated.rm",
+      "url": "https://samples.ffmpeg.org/real/VC-RV30/141a.rm",
+      "sha256": "80628074ea1325f3f60970a98a8f445c9d8510c362f5e20c27bec2c26c45ab7c",
+      "role": "malformed",
+      "notes": "Sequential demux fails with Failed to read 329 bytes."
+    },
+    {
+      "name": "rv40-truncated.rm",
+      "url": "https://samples.ffmpeg.org/real/VC-RV40/20040506.rm",
+      "sha256": "cfd9358eb8e848640d6b0442230c840cb9fc948dc9cca4eb556039d232b6edad",
+      "role": "malformed",
+      "notes": "Sequential demux fails with Truncating packet / Impossibly sized packet."
+    },
+    {
+      "name": "rv40-timestamp.rmvb",
+      "url": "https://samples.ffmpeg.org/real/VC-RV40/packet_timestamp.rmvb",
+      "sha256": "2b83d29245258e7ad1cef34616c608f4f55af828b9615b5e5d7329c6375cc6d4",
+      "role": "malformed",
+      "notes": "Sequential demux fails before clean EOS; retained as a negative case."
+    }
+  ]
+}

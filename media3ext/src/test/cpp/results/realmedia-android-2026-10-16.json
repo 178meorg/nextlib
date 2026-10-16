@@ -1,0 +1,251 @@
+{
+  "device": {
+    "ro.product.cpu.abi": "x86_64",
+    "ro.build.version.sdk": "35",
+    "ro.build.fingerprint": "Android/sdk_phone64_x86_64/emu64x:15/AE3A.240806.019/12368160:userdebug/test-keys"
+  },
+  "source_sha256": {
+    "media3ext/src/test/cpp/realmedia_probe_jni.cpp": "08e9a91b049c323a301dffaa937815d9166a8defb4d804e5772d742f7f702664",
+    "media3ext/src/test/cpp/realmedia_reference_test.cpp": "47958702f1548e137196cbb62995a6f83d8e9c68f949adaaab9e2380a79476ec",
+    "media3ext/src/test/cpp/realmedia_probe.exports": "81f77abe58de1f69949080fb21a938b7e4944add9d730478d0ba84a3575fbe0e",
+    "media3ext/src/main/cpp/ffaudio.cpp": "77f7c0fa6eabd814f48ac37d0297600b3d530e84e06b85471ff1c00441212e67",
+    "media3ext/src/main/cpp/ffvideo.cpp": "a24ff61bc3db2561af4f3f91f4566f2d5844d9d989ca4da92f1c9e55cdf6973e",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/DataSourceProbeInput.java": "f97960c3ae1a9ade1da569e38456c2111054a0463601c05d8d6c242ceb6ac9c2",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/ExtractorProbeInput.java": "b03d94438b67f7599d89a5d63ff8fcf9689ce08d06abefcd98d3f6629fe7fb35",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/ProbeInput.java": "a402d9afa7218edf572f5f1df5b95073d15ae24619a686ca26dfe88550e6e861",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaPlaybackTest.java": "c088de71b88f276742f525076e4e8b371a5657cee25296981b4c984919a4afd8",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaProbe.java": "655cb4bc95e5b7e0871737eea21959fccfc63f5223778ff5466e1c151b024a71",
+    "media3ext/src/realmediaProbe/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaPrototypeTest.java": "f5f51c57ea45bf184c3fb1423101682b58f9d421ec1972fab4eab2691b49eb13",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FFmpegOnlyRenderersFactory.java": "7fe401a028223c616c6bef64028e37f6ee70eec2251751fb189c48ef40b557fa",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegAudioDecoder.java": "b1289cc447e48a94309430cc572e3b7fb1a28106043fdcd58e616cec5e53425a",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegAudioRenderer.java": "f4579b75a3ca61a93c2dc1bda5b053ea56d65c866a078fd20db1596ea0c6b4fc",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegDecoderException.java": "27a61cc3312f1df535cdb3bde5385abd5c1aa9a89d81413d688a2bf90dc0ca69",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegDrainingDecoder.java": "1936482b04d6743a0d2ee826b09be0784d72e847a6ede00992a80f3cff476707",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegLibrary.java": "4215bf92a297302318fa67de58b43204c06c3d966e7164c9c319fba7097279d6",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegVideoDecoder.java": "9355321745e795a3669f58b27d5939930276061dadb0796f9ff5a72f94ffc7fe",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegVideoRenderer.java": "296b93bca32d09162be9d20cba9145b5415fae544513258804786607c7253445",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/Vc1InitializationData.java": "5909213f0bc8de06a248499253f563f3adde1f700ef2370c6d518f3858434d8f",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/ffdecoder/package-info.java": "158337700f8dfca789e92669a6711950a38f8ac7d551890b6103ac8b2882df74",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/FfmpegDemuxer.java": "773345234f966675993d1c745acf0efe19d1a898957f14995874560e9f3521a5",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/Media3AvioInput.java": "3b6e5e58d21bc0c695b8214dd965af3a8062c4d2984513b99bc2ecfeca2c4546",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/NextMediaSourceFactory.java": "0543d403fce857247a391da7c4e546f0f57b9347620a39f9c464408a6f1eb9fc",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaCodecConfig.java": "d708aecab2ca0ccce0f7c063e8878f9a22f2f256a3fb6fcd7a84ca9dfc45941d",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaPeriod.java": "5931a98c0797e668ac9c98352364c9e47ebcd5b24a3a077d3745cafbf5c6240c",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaSource.java": "dc32b9da5ed1689c4bf442d34dbf73991d27ff1c368577df5b0b7c73416c0d4a",
+    "media3ext/src/main/java/io/github/anilbeesetti/nextlib/media3ext/realmedia/RealMediaTimestampMapper.java": "a084540a8f81bcbe3e00cb0cb00168e21689484522942f725421d08684dc1993",
+    "media3ext/src/main/cpp/CMakeLists.txt": "e27c9f264d8d33b017bd53cf533e717f8f690717e1fad213a3952e72d323a700",
+    "media3ext/src/main/cpp/ffcommon.cpp": "903ea555caeac2276a4334fd3cd5059a08e4609046c5c7705ef52a630c95851f",
+    "media3ext/src/main/cpp/ffcommon.h": "ac1dbb91ef14a13c0940b7e4e76de585cc522e3b2011285dd73de0214f235de3",
+    "media3ext/src/main/cpp/ffdemuxer.cpp": "3c63138cbb3d4c6b674c5eed1b078050ccfec732c8efd0dbea329945cf468553",
+    "media3ext/src/main/cpp/ffmain.cpp": "d0be0d28921581e4a909d04bccde3c581881a58b1038b46e9451d1037eb3de61",
+    "gradle.properties": "e379360f4befd9d30e842909c9b5c7c16374419f31a05525aaefd21fc27a5dcd",
+    "gradle/libs.versions.toml": "7078fdaaafa3e373319534cab3cc44fe7e1aefc5e1870a6cb9ea3154f53dfe6c",
+    "ffmpeg/setup.sh": "409525b027fba27dd092570af5e72a19c7adf23396abd5bedb1f763ba069e8a5"
+  },
+  "sources_changed_during_run": false,
+  "tests": [
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "httpRangeHeadersAndTrafficUseApplicationDataSource",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "repeatedOpenCloseDoesNotRetainNativeSessions",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "stalledHttpReadHasBoundedTimeoutAndClosesNativeResources",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "productionNativeDecoderReuseIsMeasuredAgainstReference",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "originalNetworkErrorSurvivesJniAndRecoveryReopensContext",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "unindexedInputHasIdenticalSequentialPackets",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "fallbackCompletes100RandomSeeksAndChecksDecodedPixels",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "avioHandlesBufferedRewindAndReopensForOutsideSeek",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "extractorCannotSynchronouslyReadTailIndex",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPrototypeTest",
+      "name": "interruptedBlockedReadReleasesInputAndNativeSession",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "publicFactorySurvivesOneHundredDecodedSeeksAndResume",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "rv40CookPauseSpeedSeekSurfaceAndEos",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "httpCacheAndAuthenticationRetainThePlaybackPath",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "httpsUsesTheApplicationsTlsDataSource",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "mkvRetainsDefaultExtractionAndPlayback",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "rv30CookPauseSpeedSeekSurfaceAndEos",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "hlsUsesTheExistingFactoryWithoutOpeningTheProbe",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "mp4RetainsDefaultExtractionAndPlayback",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaPlaybackTest",
+      "name": "midstreamInputErrorRetriesThroughMedia3",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "nativeSurfaceFailureReleasesFrame",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "rotationReachesSurfaceAndYuvPixelsAcrossFlushAndSurfaceRecreation",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "capabilitiesRejectMissingUnsupportedAndEncryptedFormats",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "constructorFailuresStopDecodeThreads",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "renderFailureReturnsSingleBufferAndCleanupDoesNotFreeFrameAgain",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "vc1RequiresHeadersAndBundledDecoder",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "adaptationIsNotSeamlessAndKeepsInheritedNoReuse",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "missingDecoderStillReleasesOutputExactlyOnce",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRendererTest",
+      "name": "successfulRenderAndDecoderFirstCleanupReleaseFrames",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    },
+    {
+      "class": "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.DecoderManagerLifecycleTest",
+      "name": "reusedDecodersRestoreActiveModesAfterRendererDisable",
+      "passed": true,
+      "skipped": false,
+      "failure": null
+    }
+  ]
+}

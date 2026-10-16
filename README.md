@@ -12,6 +12,13 @@ This fork targets Media3 **1.8.0** and Android **5.0+ (API 21)**. Its Maven coor
 and version `1.8.0-0.16.0-vc1.5`. See [VC-1 verification](media3ext/VC1_VERIFICATION.md)
 for initialization requirements and outstanding device tests.
 
+The RealMedia development branch builds `1.8.0-0.16.0-rm1-alpha01` with RV30,
+RV40 and Cook support. Applications register `NextMediaSourceFactory` around
+their existing source factory and keep their existing renderers and DataSource.
+See [RealMedia integration and verification](media3ext/REALMEDIA_VERIFICATION.md)
+for the AVIO prototype decision, test results, sample catalog and remaining
+device acceptance checks. This alpha retains Media3 1.8.0 and API 21.
+
 Release and Debug AARs include all four ABIs: `x86`, `x86_64`, `armeabi-v7a`, and
 `arm64-v8a`. Release support for Intel ABIs is restored in `1.8.0-0.16.0-vc1.5`;
 previously published versions keep their original ABI contents.

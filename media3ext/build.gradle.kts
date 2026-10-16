@@ -48,7 +48,21 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.androidTest?.sources?.assets?.addStaticSourceDirectory("src/test/cpp/fixtures")
+        if (providers.gradleProperty("nextlibRealMediaProbe").orNull == "true") {
+            variant.androidTest?.sources?.assets?.addStaticSourceDirectory(
+                rootProject.layout.buildDirectory.dir("realmedia/android-assets").get().asFile.path)
+        }
     }
+}
+
+// The feasibility probe is opt-in and is never packaged in the published AAR.
+if (providers.gradleProperty("nextlibRealMediaProbe").orNull == "true") {
+    val probeSourceSet = (android.sourceSets as NamedDomainObjectContainer<com.android.build.api.dsl.AndroidSourceSet>)
+        .getByName("androidTest")
+    probeSourceSet.java.srcDir("src/realmediaProbe/java")
+    probeSourceSet.manifest.srcFile("src/realmediaProbe/AndroidManifest.xml")
+    probeSourceSet.jniLibs.srcDir(
+        rootProject.layout.buildDirectory.dir("realmedia/android-jni").get().asFile.path)
 }
 
 tasks.configureEach {

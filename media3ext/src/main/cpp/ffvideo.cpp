@@ -69,6 +69,7 @@ static int native_window_api_disconnect(ANativeWindow *window, int api) {
 static const int VIDEO_DECODER_SUCCESS = 0;
 static const int VIDEO_DECODER_ERROR_INVALID_DATA = -1;
 static const int VIDEO_DECODER_ERROR_OTHER = -2;
+static const int VIDEO_DECODER_END_OF_STREAM = 2;
 
 
 // Media3 C.VIDEO_OUTPUT_MODE_SURFACE_YUV.
@@ -288,7 +289,7 @@ struct JniContext {
 JniContext *createVideoContext(JNIEnv *env,
                                AVCodec *codec,
                                jbyteArray extraData,
-                               jint threads) {
+                               jint threads, jint width = 0, jint height = 0) {
     auto jniContext = std::make_unique<JniContext>();
 
     AVCodecContext *codecContext = avcodec_alloc_context3(codec);
@@ -298,6 +299,11 @@ JniContext *createVideoContext(JNIEnv *env,
     }
 
     jniContext->codecContext = codecContext;
+    codecContext->pkt_timebase = AV_TIME_BASE_Q;
+    if (codec->id == AV_CODEC_ID_RV30) {
+        codecContext->width = codecContext->coded_width = std::max(0, width);
+        codecContext->height = codecContext->coded_height = std::max(0, height);
+    }
 
     if (extraData) {
         jsize size = env->GetArrayLength(extraData);
@@ -342,14 +348,14 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpe
                                                                                  jobject thiz,
                                                                                  jstring codec_name,
                                                                                  jbyteArray extra_data,
-                                                                                 jint threads) {
+                                                                                 jint threads, jint width, jint height) {
     AVCodec *codec = getCodecByName(env, codec_name);
     if (!codec) {
         LOGE("Codec not found.");
         return 0L;
     }
 
-    return (jlong) createVideoContext(env, codec, extra_data, threads);
+    return (jlong) createVideoContext(env, codec, extra_data, threads, width, height);
 }
 
 extern "C"
@@ -474,6 +480,13 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpe
 
 extern "C"
 JNIEXPORT jint JNICALL
+Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpegSendEndOfStream(
+        JNIEnv *, jobject, jlong context) {
+    return reinterpret_cast<JniContext *>(context)->SendPacket(nullptr);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
 Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpegReceiveFrame(JNIEnv *env,
                                                                                    jobject thiz,
                                                                                    jlong jContext,
@@ -485,6 +498,10 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpe
 
     AVFrame *frame = nullptr;
     int result = jniContext->ReceiveFrame(&frame);
+    if (result == AVERROR_EOF) {
+        av_frame_free(&frame);
+        return VIDEO_DECODER_END_OF_STREAM;
+    }
 
     // fail
     if (decode_only || result == AVERROR(EAGAIN)) {

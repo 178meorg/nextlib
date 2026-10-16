@@ -8,6 +8,7 @@ import androidx.media3.common.util.LibraryLoader;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import io.github.anilbeesetti.nextlib.media3ext.realmedia.RealMediaCodecConfig;
 
 /** Configures and queries the underlying native library. */
 @UnstableApi
@@ -116,6 +117,7 @@ public final class FfmpegLibrary {
       case MimeTypes.AUDIO_ALAC -> "alac";
       case MimeTypes.AUDIO_MLAW -> "pcm_mulaw";
       case MimeTypes.AUDIO_ALAW -> "pcm_alaw";
+      case RealMediaCodecConfig.AUDIO_COOK -> "cook";
 
       // Video codecs
       case MimeTypes.VIDEO_H264 -> "h264";
@@ -126,6 +128,8 @@ public final class FfmpegLibrary {
       case MimeTypes.VIDEO_VP8 -> "vp8";
       case MimeTypes.VIDEO_VP9 -> "vp9";
       case MimeTypes.VIDEO_VC1 -> "vc1";
+      case RealMediaCodecConfig.VIDEO_RV30 -> "rv30";
+      case RealMediaCodecConfig.VIDEO_RV40 -> "rv40";
       default -> null;
     };
   }
