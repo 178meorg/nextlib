@@ -41,7 +41,7 @@ static jmethodID growOutputBufferMethod;
  */
 AVCodecContext *createContext(JNIEnv *env, AVCodec *codec, jbyteArray extraData,
                               jboolean outputFloat, jint rawSampleRate,
-                              jint rawChannelCount);
+                              jint rawChannelCount, jint blockAlign, jint bits, jint codecTag);
 
 /**
  * Decodes the packet into the output buffer, returning the number of bytes
@@ -76,7 +76,7 @@ uint8_t *GrowOutputBufferCallback::operator()(int requiredSize) const {
 
 AVCodecContext *createContext(JNIEnv *env, AVCodec *codec, jbyteArray extraData,
                               jboolean outputFloat, jint rawSampleRate,
-                              jint rawChannelCount) {
+                              jint rawChannelCount, jint blockAlign, jint bits, jint codecTag) {
     AVCodecContext *context = avcodec_alloc_context3(codec);
     if (!context) {
         LOGE("Failed to allocate context.");
@@ -88,7 +88,7 @@ AVCodecContext *createContext(JNIEnv *env, AVCodec *codec, jbyteArray extraData,
         jsize size = env->GetArrayLength(extraData);
         context->extradata_size = size;
         context->extradata =
-                (uint8_t *) av_malloc(size + AV_INPUT_BUFFER_PADDING_SIZE);
+                (uint8_t *) av_mallocz(size + AV_INPUT_BUFFER_PADDING_SIZE);
         if (!context->extradata) {
             LOGE("Failed to allocate extra data.");
             releaseContext(context);
@@ -96,8 +96,14 @@ AVCodecContext *createContext(JNIEnv *env, AVCodec *codec, jbyteArray extraData,
         }
         env->GetByteArrayRegion(extraData, 0, size, (jbyte *) context->extradata);
     }
-    if (context->codec_id == AV_CODEC_ID_PCM_MULAW ||
-        context->codec_id == AV_CODEC_ID_PCM_ALAW) {
+    context->block_align = blockAlign;
+    context->bits_per_coded_sample = bits;
+    context->codec_tag = codecTag;
+    const bool needsContainerParameters = context->codec_id == AV_CODEC_ID_PCM_MULAW ||
+        context->codec_id == AV_CODEC_ID_PCM_ALAW || context->codec_id == AV_CODEC_ID_COOK ||
+        context->codec_id == AV_CODEC_ID_SIPR || context->codec_id == AV_CODEC_ID_RA_144 ||
+        context->codec_id == AV_CODEC_ID_RA_288 || context->codec_id == AV_CODEC_ID_ATRAC3;
+    if (needsContainerParameters && rawSampleRate > 0 && rawChannelCount > 0) {
         context->sample_rate = rawSampleRate;
         context->ch_layout.nb_channels = rawChannelCount;
         av_channel_layout_default(&context->ch_layout, rawChannelCount);
@@ -218,7 +224,7 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegAudioDecoder_ffmpe
                                                                         jbyteArray extra_data,
                                                                         jboolean output_float,
                                                                         jint raw_sample_rate,
-                                                                        jint raw_channel_count) {
+                                                                        jint raw_channel_count, jint block_align, jint bits, jint codec_tag) {
     AVCodec *codec = getCodecByName(env, codec_name);
     if (!codec) {
         LOGE("Codec not found.");
@@ -227,7 +233,7 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegAudioDecoder_ffmpe
     jclass clazz = env->FindClass("io/github/anilbeesetti/nextlib/media3ext/ffdecoder/FfmpegAudioDecoder");
     growOutputBufferMethod = env->GetMethodID(clazz, "growOutputBuffer","(Landroidx/media3/decoder/SimpleDecoderOutputBuffer;I)Ljava/nio/ByteBuffer;");
     return (jlong) createContext(env, codec, extra_data, output_float, raw_sample_rate,
-                                 raw_channel_count);
+                                 raw_channel_count, block_align, bits, codec_tag);
 }
 
 extern "C"
@@ -313,17 +319,17 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegAudioDecoder_ffmpe
     if (codecId == AV_CODEC_ID_TRUEHD) {
         // Release and recreate the context if the codec is TrueHD.
         // TODO: Figure out why flushing doesn't work for this codec.
+        auto outputFloat =
+                (jboolean) (context->request_sample_fmt == OUTPUT_FORMAT_PCM_FLOAT);
         releaseContext(context);
         auto *codec = const_cast<AVCodec *>(avcodec_find_decoder(codecId));
         if (!codec) {
             LOGE("Unexpected error finding codec %d.", codecId);
             return 0L;
         }
-        auto outputFloat =
-                (jboolean) (context->request_sample_fmt == OUTPUT_FORMAT_PCM_FLOAT);
         return (jlong) createContext(env, codec, extra_data, outputFloat,
                 /* rawSampleRate= */ -1,
-                /* rawChannelCount= */ -1);
+                /* rawChannelCount= */ -1, 0, 0, 0);
     }
 
     avcodec_flush_buffers(context);

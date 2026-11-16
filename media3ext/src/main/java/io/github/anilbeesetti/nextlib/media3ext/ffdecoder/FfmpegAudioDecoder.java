@@ -58,7 +58,8 @@ final class FfmpegAudioDecoder
     encoding = outputFloat ? C.ENCODING_PCM_FLOAT : C.ENCODING_PCM_16BIT;
     outputBufferSize = outputFloat ? INITIAL_OUTPUT_BUFFER_SIZE_32BIT : INITIAL_OUTPUT_BUFFER_SIZE_16BIT;
     nativeContext =
-        ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount);
+        ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount,
+            RealMediaParameters.get(format, 0), RealMediaParameters.get(format, 1), RealMediaParameters.get(format, 2));
     if (nativeContext == 0) {
       throw new FfmpegDecoderException("Initialization failed.");
     }
@@ -173,6 +174,7 @@ final class FfmpegAudioDecoder
   @Nullable
   private static byte[] getExtraData(String mimeType, List<byte[]> initializationData) {
     if (initializationData.isEmpty()) return null;
+    if (mimeType.startsWith("audio/x-nextlib-")) return initializationData.get(0);
     return switch (mimeType) {
       case MimeTypes.AUDIO_AAC, MimeTypes.AUDIO_OPUS -> initializationData.get(0);
       case MimeTypes.AUDIO_ALAC -> getAlacExtraData(initializationData);
@@ -218,7 +220,7 @@ final class FfmpegAudioDecoder
       @Nullable byte[] extraData,
       boolean outputFloat,
       int rawSampleRate,
-      int rawChannelCount);
+      int rawChannelCount, int blockAlign, int bitsPerCodedSample, int codecTag);
 
   private native int ffmpegDecode(
       long context, ByteBuffer inputData, int inputSize, SimpleDecoderOutputBuffer decoderOutputBuffer, ByteBuffer outputData, int outputSize);

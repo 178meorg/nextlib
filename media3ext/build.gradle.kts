@@ -56,7 +56,24 @@ val ffmpegSetup by tasks.registering(Exec::class) {
 
 tasks.preBuild.dependsOn(ffmpegSetup)
 
+android.testOptions.unitTests.isIncludeAndroidResources = true
+
+// Optional Linux host JNI integration tests. Does not launch an Android emulator.
+val hostDemuxer by tasks.registering(Exec::class) {
+    workingDir = rootDir
+    commandLine("bash", "media3ext/src/test/native/build.sh")
+}
+if (providers.gradleProperty("nextlibHostTests").isPresent) {
+    tasks.withType<Test>().configureEach {
+        dependsOn(hostDemuxer)
+        systemProperty("nextlib.host.library", rootDir.resolve("build/host/libnextlib_demux_test.so").absolutePath)
+        systemProperty("nextlib.sample.dir", providers.gradleProperty("nextlibSamples").getOrElse("/tmp/nextlib-samples"))
+    }
+}
+
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.17")
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.google.errorprone.annotations)
     implementation(libs.androidx.annotation)

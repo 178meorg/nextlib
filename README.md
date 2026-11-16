@@ -37,3 +37,13 @@ ExoPlayer.Builder(applicationContext)
     .setRenderersFactory(renderersFactory)
     .build()
 ```
+
+## Experimental RM/RMVB support
+
+This fork includes an opt-in FFmpeg-backed RealMedia extractor. See [integration and testing notes](docs/realmedia.md).
+
+## Example app
+
+See [example/README.md](example/README.md) for the standalone SMB browser/player with server profiles,
+shared-folder browsing, decoder selection, and playback controls.
+Build with `./gradlew :example:assembleDebug`; no Maven publication is required.

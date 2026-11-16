@@ -84,7 +84,7 @@ struct JniContext {
 JniContext *createVideoContext(JNIEnv *env,
                                AVCodec *codec,
                                jbyteArray extraData,
-                               jint threads) {
+                               jint threads, jint width, jint height, jint codecTag) {
     auto *jniContext = new JniContext();
 
     AVCodecContext *codecContext = avcodec_alloc_context3(codec);
@@ -96,7 +96,7 @@ JniContext *createVideoContext(JNIEnv *env,
     if (extraData) {
         jsize size = env->GetArrayLength(extraData);
         codecContext->extradata_size = size;
-        codecContext->extradata = (uint8_t *) av_malloc(size + AV_INPUT_BUFFER_PADDING_SIZE);
+        codecContext->extradata = (uint8_t *) av_mallocz(size + AV_INPUT_BUFFER_PADDING_SIZE);
         if (!codecContext->extradata) {
             LOGE("Failed to allocate extradata.");
             releaseContext(codecContext);
@@ -105,6 +105,9 @@ JniContext *createVideoContext(JNIEnv *env,
         env->GetByteArrayRegion(extraData, 0, size, (jbyte *) codecContext->extradata);
     }
 
+    codecContext->width = width > 0 ? width : 0;
+    codecContext->height = height > 0 ? height : 0;
+    codecContext->codec_tag = codecTag;
     codecContext->thread_count = threads;
     codecContext->err_recognition = AV_EF_IGNORE_ERR;
     int result = avcodec_open2(codecContext, codec, nullptr);
@@ -134,14 +137,14 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpe
                                                                                  jobject thiz,
                                                                                  jstring codec_name,
                                                                                  jbyteArray extra_data,
-                                                                                 jint threads) {
+                                                                                 jint threads, jint width, jint height, jint codecTag) {
     AVCodec *codec = getCodecByName(env, codec_name);
     if (!codec) {
         LOGE("Codec not found.");
         return 0L;
     }
 
-    return (jlong) createVideoContext(env, codec, extra_data, threads);
+    return (jlong) createVideoContext(env, codec, extra_data, threads, width, height, codecTag);
 }
 
 extern "C"
@@ -302,14 +305,15 @@ Java_io_github_anilbeesetti_nextlib_media3ext_ffdecoder_FfmpegVideoDecoder_ffmpe
     AVCodecContext *avContext = jniContext->codecContext;
 
     auto *inputBuffer = (uint8_t *) env->GetDirectBufferAddress(encoded_data);
-    AVPacket packet = *av_packet_alloc();
-    packet.data = inputBuffer;
-    packet.size = length;
-    packet.pts = input_time;
+    AVPacket *packet = av_packet_alloc();
+    if (!packet) return VIDEO_DECODER_ERROR_OTHER;
+    packet->data = inputBuffer;
+    packet->size = length;
+    packet->pts = input_time;
 
     // Queue input data.
-    int result = avcodec_send_packet(avContext, &packet);
-    av_packet_unref(&packet);
+    int result = avcodec_send_packet(avContext, packet);
+    av_packet_free(&packet);
     if (result) {
         logError("avcodec_send_packet", result);
         if (result == AVERROR_INVALIDDATA) {

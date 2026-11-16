@@ -62,7 +62,7 @@ final class FfmpegVideoDecoder extends
         codecName = Assertions.checkNotNull(FfmpegLibrary.getCodecName(format.sampleMimeType));
         extraData = getExtraData(format.sampleMimeType, format.initializationData);
         this.format = format;
-        nativeContext = ffmpegInitialize(codecName, extraData, threads);
+        nativeContext = ffmpegInitialize(codecName, extraData, threads, format.width, format.height, RealMediaParameters.get(format, 2));
         if (nativeContext == 0) {
             throw new FfmpegDecoderException("Failed to initialize decoder.");
         }
@@ -76,6 +76,7 @@ final class FfmpegVideoDecoder extends
     @Nullable
     private static byte[] getExtraData(String mimeType, List<byte[]> initializationData) {
         if (initializationData.isEmpty()) return null;
+        if (mimeType.startsWith("video/x-nextlib-")) return initializationData.get(0);
         switch (mimeType) {
             case MimeTypes.VIDEO_H264 -> {
                 byte[] sps = initializationData.get(0);
@@ -111,7 +112,8 @@ final class FfmpegVideoDecoder extends
 
     @Override
     protected DecoderInputBuffer createInputBuffer() {
-        return new DecoderInputBuffer(DecoderInputBuffer.BUFFER_REPLACEMENT_MODE_DIRECT);
+        return new DecoderInputBuffer(DecoderInputBuffer.BUFFER_REPLACEMENT_MODE_DIRECT,
+                FfmpegLibrary.getInputBufferPaddingSize());
     }
 
     @Override
@@ -197,7 +199,7 @@ final class FfmpegVideoDecoder extends
         }
     }
 
-    private native long ffmpegInitialize(String codecName, @Nullable byte[] extraData, int threads);
+    private native long ffmpegInitialize(String codecName, @Nullable byte[] extraData, int threads, int width, int height, int codecTag);
 
     private native long ffmpegReset(long context);
 

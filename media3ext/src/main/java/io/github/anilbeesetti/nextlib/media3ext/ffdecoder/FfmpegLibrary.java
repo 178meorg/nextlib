@@ -101,6 +101,15 @@ public final class FfmpegLibrary {
   @Nullable
   /* package */ static String getCodecName(String mimeType) {
     return switch (mimeType) {
+      case "video/x-nextlib-rv10" -> "rv10";
+      case "video/x-nextlib-rv20" -> "rv20";
+      case "video/x-nextlib-rv30" -> "rv30";
+      case "video/x-nextlib-rv40" -> "rv40";
+      case "audio/x-nextlib-cook" -> "cook";
+      case "audio/x-nextlib-sipr" -> "sipr";
+      case "audio/x-nextlib-ra144" -> "real_144";
+      case "audio/x-nextlib-ra288" -> "real_288";
+      case "audio/x-nextlib-atrac3" -> "atrac3";
       // Audio codecs
       case MimeTypes.AUDIO_AAC -> "aac";
       case MimeTypes.AUDIO_MPEG, MimeTypes.AUDIO_MPEG_L1, MimeTypes.AUDIO_MPEG_L2 -> "mp3";

@@ -18,7 +18,7 @@ set(
         # List variable name
         ffmpeg_libs_names
         # Values in the list
-        avutil avcodec swresample swscale)
+        avutil avcodec avformat swresample swscale)
 
 foreach (ffmpeg_lib_name ${ffmpeg_libs_names})
     add_library(
@@ -34,6 +34,7 @@ endforeach ()
 
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
+        ffextractor.cpp
         ffmain.cpp
         ffcommon.cpp
         ffaudio.cpp

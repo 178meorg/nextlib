@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Versions
 VPX_VERSION=1.13.0
 MBEDTLS_VERSION=3.4.1
@@ -15,10 +17,10 @@ VPX_DIR=$SOURCES_DIR/libvpx-$VPX_VERSION
 MBEDTLS_DIR=$SOURCES_DIR/mbedtls-$MBEDTLS_VERSION
 
 # Configuration
-ANDROID_ABIS="x86 x86_64 armeabi-v7a arm64-v8a"
+ANDROID_ABIS="${ANDROID_ABIS:-x86 x86_64 armeabi-v7a arm64-v8a}"
 ANDROID_PLATFORM=21
-ENABLED_DECODERS="vorbis opus flac alac pcm_mulaw pcm_alaw mp3 amrnb amrwb aac ac3 eac3 dca mlp truehd h264 hevc mpeg2video mpegvideo libvpx_vp8 libvpx_vp9"
-JOBS=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.pysicalcpu || echo 4)
+ENABLED_DECODERS="vorbis opus flac alac pcm_mulaw pcm_alaw mp3 amrnb amrwb aac ac3 eac3 dca mlp truehd h264 hevc mpeg2video mpegvideo libvpx_vp8 libvpx_vp9 rv10 rv20 rv30 rv40 cook sipr ra_144 ra_288 atrac3"
+JOBS=${JOBS:-8}
 
 # Set up host platform variables
 HOST_PLATFORM="linux-x86_64"
@@ -38,7 +40,9 @@ TOOLCHAIN_PREFIX="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_PLATFORM}"
 CMAKE_EXECUTABLE="${ANDROID_SDK_HOME}/cmake/${ANDROID_CMAKE_VERSION}/bin/cmake"
 
 # Check if sdkmanager is in PATH
-if command -v sdkmanager &> /dev/null; then
+if [[ -x "$CMAKE_EXECUTABLE" ]]; then
+  :
+elif command -v sdkmanager &> /dev/null; then
   # Use sdkmanager from PATH
   echo "Using sdkmanager from PATH"
   echo y | sdkmanager --sdk_root="${ANDROID_SDK_HOME}" "cmake;${ANDROID_CMAKE_VERSION}"
@@ -60,7 +64,7 @@ function downloadLibVpx() {
   pushd $SOURCES_DIR
   echo "Downloading Vpx source code of version $VPX_VERSION..."
   VPX_FILE=libvpx-$VPX_VERSION.tar.gz
-  curl -L "https://github.com/webmproject/libvpx/archive/refs/tags/v${VPX_VERSION}.tar.gz" -o $VPX_FILE
+  curl -fL --retry 3 "https://github.com/webmproject/libvpx/archive/refs/tags/v${VPX_VERSION}.tar.gz" -o $VPX_FILE
   [ -e $VPX_FILE ] || { echo "$VPX_FILE does not exist. Exiting..."; exit 1; }
   tar -zxf $VPX_FILE
   rm $VPX_FILE
@@ -71,7 +75,7 @@ function downloadMbedTLS() {
   pushd $SOURCES_DIR
   echo "Downloading mbedtls source code of version $MBEDTLS_VERSION..."
   MBEDTLS_FILE=mbedtls-$MBEDTLS_VERSION.tar.gz
-  curl -L "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v${MBEDTLS_VERSION}.tar.gz" -o $MBEDTLS_FILE
+  curl -fL --retry 3 "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v${MBEDTLS_VERSION}.tar.gz" -o $MBEDTLS_FILE
   [ -e $MBEDTLS_FILE ] || { echo "$MBEDTLS_FILE does not exist. Exiting..."; exit 1; }
   tar -zxf $MBEDTLS_FILE
   rm $MBEDTLS_FILE
@@ -82,7 +86,7 @@ function downloadFfmpeg() {
   pushd $SOURCES_DIR
   echo "Downloading FFmpeg source code of version $FFMPEG_VERSION..."
   FFMPEG_FILE=ffmpeg-$FFMPEG_VERSION.tar.gz
-  curl -L "https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz" -o $FFMPEG_FILE
+  curl -fL --retry 3 "https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz" -o $FFMPEG_FILE
   [ -e $FFMPEG_FILE ] || { echo "$FFMPEG_FILE does not exist. Exiting..."; exit 1; }
   tar -zxf $FFMPEG_FILE
   rm $FFMPEG_FILE
@@ -121,8 +125,8 @@ function buildLibVpx() {
     esac
 
     CC=${TOOLCHAIN_PREFIX}/bin/${TOOLCHAIN}clang \
-      CXX=${CC}++ \
-      LD=${CC} \
+      CXX=${TOOLCHAIN_PREFIX}/bin/${TOOLCHAIN}clang++ \
+      LD=${TOOLCHAIN_PREFIX}/bin/${TOOLCHAIN}clang \
       AR=${TOOLCHAIN_PREFIX}/bin/llvm-ar \
       AS=${VPX_AS} \
       STRIP=${TOOLCHAIN_PREFIX}/bin/llvm-strip \
@@ -192,6 +196,7 @@ function buildFfmpeg() {
   for ABI in $ANDROID_ABIS; do
 
     # Set up environment variables
+    EXTRA_BUILD_CONFIGURATION_FLAGS=""
     case $ABI in
     armeabi-v7a)
       TOOLCHAIN=armv7a-linux-androideabi21-
@@ -231,6 +236,7 @@ function buildFfmpeg() {
       --arch=$ARCH \
       --cpu=$CPU \
       --cross-prefix="${TOOLCHAIN_PREFIX}/bin/$TOOLCHAIN" \
+      --x86asmexe="${TOOLCHAIN_PREFIX}/bin/yasm" \
       --nm="${TOOLCHAIN_PREFIX}/bin/llvm-nm" \
       --ar="${TOOLCHAIN_PREFIX}/bin/llvm-ar" \
       --ranlib="${TOOLCHAIN_PREFIX}/bin/llvm-ranlib" \
@@ -281,24 +287,18 @@ function buildFfmpeg() {
   popd
 }
 
-if [[ ! -d "$OUTPUT_DIR" && ! -d "$BUILD_DIR" ]]; then
-  # Download MbedTLS source code if it doesn't exist
-  if [[ ! -d "$MBEDTLS_DIR" ]]; then
-    downloadMbedTLS
-  fi
-
-  # Download Vpx source code if it doesn't exist
-  if [[ ! -d "$VPX_DIR" ]]; then
-    downloadLibVpx
-  fi
-
-  # Download Ffmpeg source code if it doesn't exist
-  if [[ ! -d "$FFMPEG_DIR" ]]; then
-    downloadFfmpeg
-  fi
-
-  # Building library
-  buildMbedTLS
-  buildLibVpx
-  buildFfmpeg
+# Include script changes and selected ABIs in the cache key; a failed build is never cached.
+function hashConfig() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum; else shasum -a 256; fi
+}
+BUILD_KEY=$( (cat "$BASE_DIR/setup.sh"; echo "$ANDROID_ABIS"; echo "$ANDROID_NDK_HOME") | hashConfig | cut -d ' ' -f 1)
+if [[ -f "$OUTPUT_DIR/.build-key" ]] && [[ "$(cat "$OUTPUT_DIR/.build-key")" == "$BUILD_KEY" ]]; then
+  exit 0
 fi
+[[ -d "$MBEDTLS_DIR" ]] || downloadMbedTLS
+[[ -d "$VPX_DIR" ]] || downloadLibVpx
+[[ -d "$FFMPEG_DIR" ]] || downloadFfmpeg
+buildMbedTLS
+buildLibVpx
+buildFfmpeg
+printf '%s\n' "$BUILD_KEY" > "$OUTPUT_DIR/.build-key"
