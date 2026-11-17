@@ -1,7 +1,7 @@
 # Nextlib SMB Example
 
-独立测试 APK，直接依赖 `:media3ext`，无需发布 AAR。最低 Android 5.0（API 21）。
-应用 ID 见 `example/build.gradle.kts`。
+独立测试 APK，直接依赖 `:media3ext`，无需发布 AAR。默认最低 Android 5.0（API 21）；
+选择 `-Pmedia3Version=1.10.1` 时最低 API 为 23。应用 ID 见 `example/build.gradle.kts`。
 
 ## 使用
 

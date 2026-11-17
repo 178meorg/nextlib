@@ -1,4 +1,5 @@
-import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.api.publish.PublishingExtension
 
 plugins {
     alias(libs.plugins.androidApplication) apply false
@@ -7,15 +8,24 @@ plugins {
     alias(libs.plugins.mavenPublish) apply false
 }
 
+val media3Version = libs.versions.androidxMedia3.get()
+val nextlibVersion = providers.gradleProperty("nextlibVersion").get()
+val releaseVersion = providers.gradleProperty("releaseVersion")
+    .getOrElse("$media3Version-$nextlibVersion")
+require(releaseVersion.matches(Regex("[0-9][0-9A-Za-z._-]*"))) {
+    "Invalid releaseVersion '$releaseVersion'"
+}
+require(releaseVersion.startsWith("$media3Version-") && releaseVersion.length > media3Version.length + 1) {
+    "releaseVersion '$releaseVersion' must start with '$media3Version-' and include an extension version"
+}
+
 subprojects {
     plugins.withId(rootProject.libs.plugins.mavenPublish.get().pluginId) {
         configure<com.vanniktech.maven.publish.MavenPublishBaseExtension> {
-            publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-            signAllPublications()
             coordinates(
-                groupId = "io.github.anilbeesetti",
+                groupId = "cloud.lazycat",
                 artifactId = property("POM_ARTIFACT_ID") as String,
-                version = "${libs.versions.androidxMedia3.get()}-0.9.0"
+                version = releaseVersion
             )
 
             pom {
@@ -38,6 +48,17 @@ subprojects {
                 }
                 scm {
                     url = "https://github.com/anilbeesetti/nextlib"
+                }
+            }
+        }
+        configure<PublishingExtension> {
+            repositories {
+                providers.gradleProperty("companyRepositoryUrl").orNull?.let { repositoryUrl ->
+                    maven {
+                        name = "company"
+                        url = uri(repositoryUrl)
+                        credentials(PasswordCredentials::class)
+                    }
                 }
             }
         }

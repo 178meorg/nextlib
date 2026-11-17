@@ -29,6 +29,14 @@ dependencies {
 
 ## Usage
 
+The same source tree supports Media3 1.8.0 (API 21+) and Media3 1.10.1 (API 23+).
+Publication versions follow `<Media3 version>-<extension version>`; keep all Media3 modules
+in each app on the matching version. Both builds share the FFmpeg and RM/RMVB code.
+
+Build with `./gradlew :media3ext:assembleRelease -Pmedia3Version=1.10.1`, or omit
+the parameter for Media3 1.8.0. The example app follows the same selection.
+See [local builds and manual Maven publishing](docs/publishing.md).
+
 To use Ffmpeg decoders in your app, Add `NextRenderersFactory` (is one to one compatible with DefaultRenderersFactory) to `ExoPlayer`
 ```kotlin
 val renderersFactory = NextRenderersFactory(applicationContext) 
@@ -39,6 +47,8 @@ ExoPlayer.Builder(applicationContext)
 ```
 
 ## Experimental RM/RMVB support
+
+Build and publishing options: see [publishing instructions](docs/publishing.md).
 
 This fork includes an opt-in FFmpeg-backed RealMedia extractor. See [integration and testing notes](docs/realmedia.md).
 

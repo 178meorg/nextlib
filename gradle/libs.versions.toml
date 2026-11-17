@@ -3,6 +3,7 @@ androidCompileSdk = "36"
 agp = "8.10.1"
 kotlin = "2.1.21"
 androidxMedia3 = "1.8.0"
+media3MinSdk = "21"
 checkerQual = "3.49.4"
 googleErrorProne = "2.38.0"
 androidxAnnotation = "1.9.1"
@@ -14,6 +15,7 @@ mavenPublish = "0.32.0"
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
 kotlin-annotations-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-annotations-jvm", version.ref = "kotlin" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
 checker-qual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checkerQual" }
 google-errorprone-annotations = { group = "com.google.errorprone", name = "error_prone_annotations", version.ref = "googleErrorProne" }
 

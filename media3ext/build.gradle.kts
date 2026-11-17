@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
 
-        minSdk = 21
+        minSdk = libs.versions.media3MinSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
