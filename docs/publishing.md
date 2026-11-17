@@ -12,6 +12,22 @@ and the minimum API for both `media3ext` and the example app. Other Media3 versi
 rejected until their API requirements and compatibility have been verified.
 FFmpeg remains compiled for API 21 and is shared by both builds.
 
+## Makefile shortcuts
+
+```bash
+make build                          # Compile both versions sequentially
+make publish                        # Publish both versions to the configured repository
+make publish VERSION=0.9.0-rmvb.3    # Override the shared extension version
+make publish-local                  # Install both versions into local Maven
+make publish-legacy                 # Publish only Media3 1.8.0
+make publish-modern                 # Publish only Media3 1.10.1
+```
+
+The default extension version comes from `gradle.properties`. Use `make help` for available
+targets. Targets run sequentially even with `make -j`, because build outputs are shared.
+Additional Gradle options can be passed with `GRADLE_ARGS`, for example
+`make build GRADLE_ARGS="--offline --console=plain"`.
+
 ## Build locally
 
 Use JDK 17 and install the Android SDK, NDK, and CMake versions specified in
